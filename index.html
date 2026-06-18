@@ -3,122 +3,85 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>할머니 생신</title>
+<title>할머니 생신 파티 🎉</title>
 
 <style>
-body {
-    font-family: 'Nanum Gothic', sans-serif;
+body{
+    font-family: sans-serif;
     background: linear-gradient(90deg,#fff0f3,#ffe5ec);
-    margin: 0;
-    padding: 20px;
+    margin:0;
+    padding:20px;
 }
 
-.container {
-    max-width: 600px;
-    margin: 0 auto 20px auto;
-    background: white;
-    padding: 20px;
-    border-radius: 20px;
-    border: 4px solid #ffccd5;
-    box-shadow: 0 10px 25px rgba(255,182,193,0.3);
+.container{
+    max-width:600px;
+    margin:0 auto 20px auto;
+    background:white;
+    padding:20px;
+    border-radius:20px;
+    border:4px solid #ffccd5;
+    box-shadow:0 10px 20px rgba(255,182,193,0.3);
 }
 
-/* 제목 */
-h1,h2,h3 {
-    text-align: center;
-    color: #ff4d7d;
+h1,h2,h3{ text-align:center; color:#ff4d7d; }
+
+input,button{
+    width:100%;
+    padding:12px;
+    margin-top:8px;
+    border-radius:12px;
+    border:2px solid #ffd1dc;
+    box-sizing:border-box;
 }
 
-/* 버튼 */
-button {
-    width: 100%;
-    padding: 12px;
-    border: none;
-    border-radius: 14px;
-    background: linear-gradient(135deg,#ff4d7d,#ff8fa9);
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
+button{
+    background:#ff4d7d;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
 }
 
-/* 입력 */
-input {
-    width: 100%;
-    padding: 12px;
-    margin: 5px 0;
-    border-radius: 12px;
-    border: 2px solid #ffd1dc;
-    box-sizing: border-box;
-}
-
-/* 💌 게시판 */
-.board {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-/* 카드 디자인 */
-.post {
-    background: #fff9a6;
-    padding: 14px;
-    border-radius: 16px;
-    box-shadow: 0 5px 10px rgba(0,0,0,0.1);
-    transform: rotate(-0.5deg);
-}
-
-.post b {
-    display: block;
-    margin-bottom: 5px;
-    color: #5a4b00;
+/* 게시판 */
+.post{
+    background:#fff9a6;
+    padding:12px;
+    margin-top:10px;
+    border-radius:12px;
 }
 
 /* 제비뽑기 */
-.lottery {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
+.grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
 }
 
-.lottery div {
-    padding: 15px;
-    background: #ffe5ec;
-    border-radius: 14px;
-    text-align: center;
-    cursor: pointer;
-    font-weight: bold;
+.grid div{
+    background:#ffe5ec;
+    padding:15px;
+    text-align:center;
+    border-radius:12px;
+    cursor:pointer;
+    font-weight:bold;
 }
 
-.result {
-    text-align: center;
-    margin-top: 10px;
-    color: #ff4d7d;
-    font-weight: bold;
+.result{
+    text-align:center;
+    margin-top:10px;
+    color:#ff4d7d;
+    font-weight:bold;
 }
 
 /* 갤러리 */
-.gallery {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
+.gallery{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
 }
 
-.card {
-    border: 2px solid #ffe5ec;
-    border-radius: 14px;
-    overflow: hidden;
-}
-
-.card img {
-    width: 100%;
-}
-
-.card span {
-    display: block;
-    padding: 8px;
-    text-align: center;
-    font-size: 13px;
+.card img{
+    width:100%;
+    border-radius:10px;
 }
 </style>
 </head>
@@ -129,22 +92,22 @@ input {
 <h1>🎉 할머니 생신 🎉</h1>
 </div>
 
-<!-- 💌 게시판 -->
+<!-- 게시판 -->
 <div class="container">
-<h2>게시판</h2>
+<h2>💌 게시판 (실시간 공유)</h2>
 
 <input id="name" placeholder="이름">
 <input id="msg" placeholder="메시지">
-<button onclick="addPost()">등록</button>
+<button onclick="sendPost()">등록</button>
 
-<div id="board" class="board"></div>
+<div id="posts"></div>
 </div>
 
-<!-- 🎁 제비뽑기 -->
+<!-- 제비뽑기 -->
 <div class="container">
-<h2>제비뽑기</h2>
+<h2>🎁 제비뽑기</h2>
 
-<div class="lottery">
+<div class="grid">
 <div onclick="pick('안마쿠폰 💆')">?</div>
 <div onclick="pick('뽀뽀포옹 😘')">?</div>
 <div onclick="pick('저녁밥상 🍲')">?</div>
@@ -154,9 +117,9 @@ input {
 <div class="result" id="result"></div>
 </div>
 
-<!-- 🖼 갤러리 -->
+<!-- 갤러리 -->
 <div class="container">
-<h2>갤러리</h2>
+<h2>🖼 갤러리 (실시간 공유)</h2>
 
 <input id="imgName" placeholder="설명">
 <input type="file" id="imgFile">
@@ -165,80 +128,105 @@ input {
 <div id="gallery" class="gallery"></div>
 </div>
 
-<script>
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+  getDatabase,
+  ref,
+  push,
+  onValue
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-/* ======================
-   💌 LOCAL STORAGE 게시판
-====================== */
+import {
+  getStorage,
+  ref as sRef,
+  uploadBytes,
+  getDownloadURL
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
-let posts = JSON.parse(localStorage.getItem("posts") || "[]");
+/* 🔥 네 Firebase 설정 */
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_DOMAIN",
+  databaseURL: "YOUR_DB_URL",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_BUCKET",
+  messagingSenderId: "YOUR_ID",
+  appId: "YOUR_APP_ID"
+};
 
-function renderPosts(){
-    const board = document.getElementById("board");
-    board.innerHTML = "";
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const storage = getStorage(app);
 
-    posts.forEach(p=>{
-        const div = document.createElement("div");
-        div.className = "post";
-        div.innerHTML = `<b>${p.name}</b>${p.msg}`;
-        board.appendChild(div);
-    });
-}
+/* =====================
+   💌 게시판
+===================== */
 
-function addPost(){
+function sendPost(){
     const name = document.getElementById("name").value;
     const msg = document.getElementById("msg").value;
 
-    if(!name || !msg) return;
-
-    posts.push({name,msg});
-    localStorage.setItem("posts", JSON.stringify(posts));
-
-    renderPosts();
+    push(ref(db,"posts"),{
+        name:name,
+        msg:msg,
+        time:Date.now()
+    });
 }
 
-/* 제비뽑기 */
+onValue(ref(db,"posts"), snap=>{
+    const box = document.getElementById("posts");
+    box.innerHTML="";
+
+    snap.forEach(v=>{
+        const d = v.val();
+        box.innerHTML += `
+        <div class="post">
+            <b>${d.name}</b><br>${d.msg}
+        </div>`;
+    });
+});
+
+/* =====================
+   🎁 제비뽑기
+===================== */
 function pick(v){
     document.getElementById("result").innerText = "당첨: " + v;
 }
 
-/* 갤러리 (저장됨) */
-let gallery = JSON.parse(localStorage.getItem("gallery") || "[]");
+/* =====================
+   🖼 갤러리 (Storage)
+===================== */
 
-function renderGallery(){
-    const g = document.getElementById("gallery");
-    g.innerHTML = "";
-
-    gallery.forEach(i=>{
-        const div = document.createElement("div");
-        div.className = "card";
-        div.innerHTML = `
-            <img src="${i.img}">
-            <span>${i.name}</span>
-        `;
-        g.appendChild(div);
-    });
-}
-
-function upload(){
+async function upload(){
     const file = document.getElementById("imgFile").files[0];
     const name = document.getElementById("imgName").value;
 
-    if(!file) return;
+    const imgRef = sRef(storage,"images/" + Date.now());
 
-    const reader = new FileReader();
-    reader.onload = e=>{
-        gallery.push({img:e.target.result,name});
-        localStorage.setItem("gallery", JSON.stringify(gallery));
-        renderGallery();
-    };
-    reader.readAsDataURL(file);
+    await uploadBytes(imgRef,file);
+    const url = await getDownloadURL(imgRef);
+
+    push(ref(db,"gallery"),{
+        name:name,
+        url:url
+    });
 }
 
-/* 처음 로딩 */
-renderPosts();
-renderGallery();
+onValue(ref(db,"gallery"), snap=>{
+    const g = document.getElementById("gallery");
+    g.innerHTML="";
 
+    snap.forEach(v=>{
+        const d = v.val();
+        g.innerHTML += `
+        <div class="card">
+            <img src="${d.url}">
+            <div>${d.name}</div>
+        </div>`;
+    });
+});
 </script>
 
 </body>
