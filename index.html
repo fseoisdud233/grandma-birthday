@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>할머니 생신 축하드려요!</title>
+    
+    <!-- ⚡ [핵심 교정] 깃허브 보안 서버가 검열 차단하지 못하도록 구글 공식 CDN 라이브러리를 최상단에 강제 고정 배치 -->
+    <script src="https://gstatic.com"></script>
+    <script src="https://gstatic.com"></script>
+    
     <style>
         @import url('https://googleapis.com');
         body {
@@ -52,23 +57,18 @@
         #couponResult { text-align: center; font-size: 20px; font-weight: bold; color: #ff4d7d; background: #fff5f7; padding: 15px; border-radius: 14px; border: 2px dashed #ffb3c6; margin-top: 15px; min-height: 30px; }
         input[type="text"], input[type="file"] { width: 100%; padding: 14px; font-size: 16px; border: 2px solid #ffe5ec; border-radius: 14px; margin-bottom: 12px; box-sizing: border-box; background-color: #fffafb; }
         
-        /* 💛 2구역: 오직 글씨 편지만 들어가는 노란색 포스트잇 보드 */
+        /* 💛 2구역: 축하 글 전용 노란색 포스트잇 보드 */
         .postit-board { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; margin-top: 20px; }
-        .postit-item {
-            background: #fff9a6; color: #3d3500; padding: 18px 15px; border-radius: 2px;
-            box-shadow: 3px 5px 10px rgba(0, 0, 0, 0.1); font-size: 15px; line-height: 1.5;
-            position: relative; transform: rotate(-1.5deg); word-break: break-all;
-        }
+        .postit-item { background: #fff9a6; color: #3d3500; padding: 18px 15px; border-radius: 2px; box-shadow: 3px 5px 10px rgba(0, 0, 0, 0.1); font-size: 15px; line-height: 1.5; position: relative; transform: rotate(-1.5deg); word-break: break-all; }
         .postit-item:nth-child(even) { transform: rotate(2deg); }
         .postit-item::before { content: ""; position: absolute; top: -9px; left: 50%; transform: translateX(-50%); width: 50px; height: 18px; background-color: rgba(255, 255, 255, 0.5); }
         .postit-item strong { display: block; font-size: 13px; color: #736500; border-bottom: 1px dashed rgba(0, 0, 0, 0.15); padding-bottom: 5px; margin-bottom: 8px; }
 
-        /* 🖼️ 4구역: 맨 아래 완전히 독립 분리된 깔끔한 백색 액자형 사진 갤러리 보드 */
+        /* 🖼️ 4구역: 맨 아래 완전히 독립 분리된 사진 전용 백색 액자 갤러리 보드 */
         .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; margin-top: 20px; }
         .photo-card { background: #ffffff; padding: 10px; border-radius: 14px; border: 2px solid #ffe5ec; box-shadow: 0 5px 12px rgba(255, 182, 193, 0.2); box-sizing: border-box; }
         .photo-card img { width: 100%; height: auto; border-radius: 10px; display: block; }
         .photo-card span { display: block; text-align: center; font-size: 12px; font-weight: bold; color: #ff7494; margin-top: 8px; }
-        
         hr { border: 0; height: 2px; background: #ffe5ec; margin: 30px 0; }
         .confetti-piece { position: fixed; width: 10px; height: 10px; border-radius: 50%; z-index: 999; pointer-events: none; animation: fall linear forwards; }
         @keyframes fall { 0% { transform: translateY(-20px) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
@@ -84,18 +84,18 @@
         <a href="https://youtu.be" class="btn-link">🎵 노래 재생 </a>
     </div>
 
-    <!-- 2구역 편지 보드 -->
+    <!-- 2구역: 오직 축하 편지만 들어가는 단독 공간 -->
     <div class="container">
         <h3>💌 할머니께 보내는 축하 포스트잇 편지</h3>
         <div>
             <input type="text" id="nameInput" placeholder="이름 (예: 큰아들, 손주 아인이)">
             <input type="text" id="messageInput" placeholder="축하 메시지를 입력하세요">
-            <button id="submitBtn">✏️ 축하 포스트잇 붙이기</button>
+            <button id="submitBtn">✏️ 축하 편지 실시간 공유 등록</button>
         </div>
         <div id="commentList" class="postit-board"></div>
     </div>
 
-    <!-- 3구역 룰렛 -->
+    <!-- 3구역: 룰렛 게임 -->
     <div class="container">
         <h2>🎁 돌려돌려~ 할머니 효도 룰렛!</h2>
         <p>원판을 돌려 오늘의 효도 선물을 확인해 보세요!</p>
@@ -114,20 +114,34 @@
         <p id="couponResult">결과 대기 중...</p>
     </div>
 
-    <!-- 4구역 독립 갤러리 -->
+    <!-- 4구역: 아래쪽에 완전히 따로 분리된 갤러리 파일 업로드 사진첩 구역 -->
     <div class="container">
         <h3>📸 우리 가족 추억 사진첩 (내 폰 갤러리 연동)</h3>
         <p style="font-size:13px; color:#ff7494; text-align:center; margin-bottom:10px;">💡 내 스마트폰 갤러리에서 사진 파일을 직접 선택해서 올려보세요!</p>
         <div>
             <input type="file" id="imageInput" accept="image/*">
-            <button id="uploadBtn" style="background-color: #10ac84; box-shadow: 0 5px 0px #0d8566;">🖼️ 사진첩에 등록하기</button>
+            <button id="uploadBtn" style="background-color: #10ac84; box-shadow: 0 5px 0px #0d8566;">🖼️ 사진 실시간 공유 등록</button>
         </div>
         <hr>
-        <h2 style="font-size: 20px; color: #4a373a; margin-top: 0; text-align: left;">🖼️ 저장된 우리 가족 사진첩 목록</h2>
+        <h2 style="font-size: 20px; color: #4a373a; margin-top: 0; text-align: left;">🖼️ 공유된 가족 추억 사진 목록</h2>
         <div id="galleryContainer" class="photo-grid"></div>
     </div>
-
     <script>
+        // 🔒 [완벽 결합] 질문자님이 발급받으신 고유 정보 주입 및 필수 구글 DB 주소 바인딩 완료
+        const firebaseConfig = {
+            apiKey: "AIzaSyAHF0aSqAGZ6N61MEP8SMUOLDYnXfrXVX8",
+            authDomain: "://firebaseapp.com",
+            databaseURL: "https://firebaseio.com",
+            projectId: "grandma-birthday",
+            storageBucket: "grandma-birthday.firebasestorage.app",
+            messagingSenderId: "826104826047",
+            appId: "1:826104826047:web:0c774d0289d03de0b89e0a",
+            measurementId: "G-RRRKVE9C03"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
         function burstConfetti() {
             const colors = ['#ff7494', '#ffb3c6', '#ffccd5', '#ffe5ec', '#feca57', '#4cd137'];
             for (let i = 0; i < 70; i++) {
@@ -142,36 +156,51 @@
         }
         window.addEventListener('DOMContentLoaded', () => { burstConfetti(); });
 
-        // --- 💌 2구역: 편지 로직 (입력 비우기 기능 완비) ---
+        // --- 💌 2구역: 구글 클라우드 실시간 편지 무한 싱크 보드 ---
         const nameInput = document.getElementById('nameInput');
         const messageInput = document.getElementById('messageInput');
         const submitBtn = document.getElementById('submitBtn');
         const commentList = document.getElementById('commentList');
 
-        const savedComments = JSON.parse(localStorage.getItem('grandmaComments')) || [];
-        savedComments.forEach(comment => displayComment(comment.name, comment.text));
+        database.ref('liveMessages').on('value', (snapshot) => {
+            commentList.innerHTML = "";
+            const data = snapshot.val();
+            if(data) {
+                Object.values(data).forEach(c => {
+                    const div = document.createElement('div'); div.className = 'postit-item';
+                    div.innerHTML = `<strong>📌 From. ${c.name}</strong>${c.text}`;
+                    commentList.appendChild(div);
+                });
+            }
+        });
 
         submitBtn.onclick = () => {
             const name = nameInput.value.trim(); const text = messageInput.value.trim();
             if (!name || !text) { alert("이름과 메시지를 모두 입력해주세요!"); return; }
-            displayComment(name, text);
-            savedComments.push({ name: name, text: text });
-            localStorage.setItem('grandmaComments', JSON.stringify(savedComments));
-            nameInput.value = ''; messageInput.value = ''; burstConfetti();
+
+            database.ref('liveMessages').push({ name, text }).then(() => {
+                // ⚡ [버그 정정] 등록 성공 즉시 입력 양식 초기화 비우기 실행
+                nameInput.value = ''; messageInput.value = ''; burstConfetti();
+            });
         };
 
-        function displayComment(name, text) {
-            const div = document.createElement('div'); div.className = 'postit-item';
-            div.innerHTML = `<strong>📌 From. ${name}</strong>${text}`; commentList.appendChild(div);
-        }
-
-        // --- 📸 4구역: 내 폰 갤러리 파일 압축 영구 소장 시스템 ---
+        // --- 📸 4구역: 구글 클라우드 기기 갤러리 파일 영구 동기화 시스템 ---
         const imageInput = document.getElementById('imageInput');
         const uploadBtn = document.getElementById('uploadBtn');
         const galleryContainer = document.getElementById('galleryContainer');
 
-        const savedImages = JSON.parse(localStorage.getItem('grandmaImages')) || [];
-        savedImages.forEach(imgData => displayImageInGallery(imgData));
+        database.ref('liveGallery').on('value', (snapshot) => {
+            galleryContainer.innerHTML = "";
+            const data = snapshot.val();
+            if(data) {
+                Object.values(data).forEach(url => {
+                    const card = document.createElement('div'); card.className = 'photo-card';
+                    const img = document.createElement('img'); img.src = url;
+                    const span = document.createElement('span'); span.innerText = `❤️ 가족 추억`;
+                    card.appendChild(img); card.appendChild(span); galleryContainer.appendChild(card);
+                });
+            }
+        });
 
         uploadBtn.onclick = () => {
             if (imageInput.files.length === 0) { alert("갤러리에서 사진 파일을 선택해주세요!"); return; }
@@ -179,32 +208,20 @@
             const reader = new FileReader();
             
             reader.onloadend = function () {
-                const base64String = reader.result;
-                displayImageInGallery(base64String);
-                savedImages.push(base64String);
-                try {
-                    localStorage.setItem('grandmaImages', JSON.stringify(savedImages));
-                } catch(e) {
-                    console.log("저장 범위 수평 보정");
-                }
-                imageInput.value = ''; burstConfetti();
+                database.ref('liveGallery').push(reader.result).then(() => {
+                    // ⚡ [버그 정정] 업로드 완료 즉시 사진 선택창 비우기 실행
+                    imageInput.value = ''; burstConfetti();
+                }).catch(() => {
+                    alert("사진 용량이 구글 무료 서버 한도를 초과했습니다. 조금 더 작은 사진을 골라주세요!");
+                });
             }
             reader.readAsDataURL(file);
         };
 
-        function displayImageInGallery(url) {
-            const card = document.createElement('div'); card.className = 'photo-card';
-            const today = new Date(); const dateStr = `${today.getFullYear()}.${today.getMonth()+1}.${today.getDate()}`;
-            const img = document.createElement('img'); img.src = url;
-            const span = document.createElement('span'); span.innerText = `❤️ 추억 (${dateStr})`;
-            card.appendChild(img); card.appendChild(span); galleryContainer.appendChild(card);
-        }
-
-        // --- 🎪 3구역: 룰렛 연산 제어 모듈 ---
+        // --- 🎪 3구역: 룰렛 제어 장치 ---
         const wheel = document.getElementById('wheel'); const spinBtn = document.getElementById('spinBtn'); const couponResult = document.getElementById('couponResult');
         const coupons = ["💆 손주의 든든한 어깨 안마 30분 이용권!", "🎤 할머니가 부르면 언제든 달려가는 대기조 이용권!", "🍲 아인이가 차려드리는 맛있는 저녁 밥상권!", "😘 온 가족의 뽀뽀와 포옹 10회 이용권!"];
         let currentRotation = 0; let isSpinning = false;
-        
         spinBtn.onclick = () => {
             if (isSpinning) return; isSpinning = true; couponResult.innerText = "빙글빙글 도는 중... 🎲";
             const randomDegree = Math.floor(Math.random() * 360) + 1800; currentRotation += randomDegree; wheel.style.transform = `rotate(${currentRotation}deg)`;
