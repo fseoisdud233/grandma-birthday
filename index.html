@@ -60,7 +60,7 @@
         .postit-item::before { content: ""; position: absolute; top: -9px; left: 50%; transform: translateX(-50%); width: 50px; height: 18px; background-color: rgba(255, 255, 255, 0.5); }
         .postit-item strong { display: block; font-size: 13px; color: #736500; border-bottom: 1px dashed rgba(0, 0, 0, 0.15); padding-bottom: 5px; margin-bottom: 8px; }
 
-        /* 🖼️ 4구역: 맨 아래 단독 분리된 내 폰 갤러리 연동 백색 액자 갤러리 보드 */
+        /* 🖼️ 4구역: 맨 아래 완전히 분리된 사진 전용 백색 액자 갤러리 보드 */
         .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; margin-top: 20px; }
         .photo-card { background: #ffffff; padding: 10px; border-radius: 14px; border: 2px solid #ffe5ec; box-shadow: 0 5px 12px rgba(255, 182, 193, 0.2); box-sizing: border-box; }
         .photo-card img { width: 100%; height: auto; border-radius: 10px; display: block; }
@@ -80,7 +80,7 @@
         <a href="https://youtu.be" class="btn-link">🎵 노래 재생 </a>
     </div>
 
-    <!-- 2구역: 오직 글씨 편지만 전용으로 모이는 공간 -->
+    <!-- 2구역: 오직 축하 편지만 들어가는 단독 공간 -->
     <div class="container">
         <h3>💌 할머니께 보내는 축하 포스트잇 편지</h3>
         <div>
@@ -110,12 +110,11 @@
         <p id="couponResult">결과 대기 중...</p>
     </div>
 
-    <!-- 4구역: 밑으로 완벽하게 따로 분리된 스마트폰 갤러리 연동 전용 사진첩 구역 -->
+    <!-- 4구역: 아래쪽에 완전히 따로 분리된 스마트폰 갤러리 파일 업로드 사진첩 구역 -->
     <div class="container">
         <h3>📸 우리 가족 추억 사진첩 (내 폰 갤러리 연동)</h3>
         <p style="font-size:13px; color:#ff7494; text-align:center; margin-bottom:10px;">💡 내 스마트폰 갤러리에서 사진 파일을 직접 선택해서 올려보세요!</p>
         <div>
-            <!-- 스마트폰 갤러리 파일 직접 선택 창 -->
             <input type="file" id="imageInput" accept="image/*">
             <button id="uploadBtn" style="background-color: #10ac84; box-shadow: 0 5px 0px #0d8566;">🖼️ 사진 실시간 공유 등록</button>
         </div>
@@ -123,7 +122,26 @@
         <h2 style="font-size: 20px; color: #4a373a; margin-top: 0; text-align: left;">🖼️ 공유된 가족 추억 사진 목록</h2>
         <div id="galleryContainer" class="photo-grid"></div>
     </div>
+    <!-- 구글 공식 파이어베이스 데이터베이스 엔진 탑재 -->
+    <script src="https://gstatic.com"></script>
+    <script src="https://gstatic.com"></script>
+
     <script>
+        // 🔒 [연동 성료] 보내주신 고유 주소 및 누락되었던 데이터베이스 엔드포인트 완벽 자동 맵핑 주입
+        const firebaseConfig = {
+            apiKey: "AIzaSyAHF0aSqAGZ6N61MEP8SMUOLDYnXfrXVX8",
+            authDomain: "grandma-birthday.firebaseapp.com",
+            databaseURL: "https://firebaseio.com",
+            projectId: "grandma-birthday",
+            storageBucket: "grandma-birthday.firebasestorage.app",
+            messagingSenderId: "826104826047",
+            appId: "1:826104826047:web:0c774d0289d03de0b89e0a",
+            measurementId: "G-RRRKVE9C03"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
         function burstConfetti() {
             const colors = ['#ff7494', '#ffb3c6', '#ffccd5', '#ffe5ec', '#feca57', '#4cd137'];
             for (let i = 0; i < 70; i++) {
@@ -138,89 +156,72 @@
         }
         window.addEventListener('DOMContentLoaded', () => { burstConfetti(); });
 
-        // 🔒 [CORS 제약 완전 해결] 깃허브 보안 서버망을 프리패스로 우회 통과하는 초고속 무라이브러리 데이터 주소
-        const SERVER_URL = "https://jsonip.cc";
-        let liveCache = { txt: [], img: [] };
+        // --- 💌 2구역: 구글 서버 편지 무제한 실시간 싱크 동기화 시스템 ---
+        const nameInput = document.getElementById('nameInput');
+        const messageInput = document.getElementById('messageInput');
+        const submitBtn = document.getElementById('submitBtn');
+        const commentList = document.getElementById('commentList');
 
-        // 3.5초 간격으로 전 세계 가족 스마트폰 간의 데이터를 강제 동기화 덤프시키는 핵심 함수
-        function syncCloudContent() {
-            fetch(SERVER_URL)
-            .then(res => res.json())
-            .then(data => {
-                if(data) {
-                    liveCache = data;
-                    const commentList = document.getElementById('commentList');
-                    const galleryContainer = document.getElementById('galleryContainer');
-                    commentList.innerHTML = "";
-                    galleryContainer.innerHTML = "";
+        database.ref('liveMessages').on('value', (snapshot) => {
+            commentList.innerHTML = "";
+            const data = snapshot.val();
+            if(data) {
+                Object.values(data).forEach(c => {
+                    const div = document.createElement('div'); div.className = 'postit-item';
+                    div.innerHTML = `<strong>📌 From. ${c.name}</strong>${c.text}`;
+                    commentList.appendChild(div);
+                });
+            }
+        });
 
-                    if(liveCache.txt) {
-                        liveCache.txt.forEach(c => {
-                            const div = document.createElement('div'); div.className = 'postit-item';
-                            div.innerHTML = `<strong>📌 From. ${c.name}</strong>${c.text}`;
-                            commentList.appendChild(div);
-                        });
-                    }
-                    if(liveCache.img) {
-                        liveCache.img.forEach(url => {
-                            const card = document.createElement('div'); card.className = 'photo-card';
-                            const img = document.createElement('img'); img.src = url;
-                            const span = document.createElement('span'); span.innerText = `❤️ 가족 추억`;
-                            card.appendChild(img); card.appendChild(span);
-                            galleryContainer.appendChild(card);
-                        });
-                    }
-                }
-            }).catch(e => console.log("동기화 대기 중..."));
-        }
-
-        window.onload = () => { syncCloudContent(); setInterval(syncCloudContent, 3500); };
-
-        // 2구역 편지 전송 버튼 제어부 (누르면 즉시 비워지게 조치)
-        document.getElementById('submitBtn').onclick = () => {
-            const name = document.getElementById('nameInput').value.trim();
-            const text = document.getElementById('messageInput').value.trim();
+        submitBtn.onclick = () => {
+            const name = nameInput.value.trim(); const text = messageInput.value.trim();
             if (!name || !text) { alert("이름과 메시지를 모두 입력해주세요!"); return; }
 
-            if(!liveCache.txt) liveCache.txt = [];
-            liveCache.txt.push({ name, text });
-
-            fetch(SERVER_URL, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(liveCache)
-            }).then(() => {
-                // ⚡ [버그 정정] 전송 실패 없이 즉시 입력창 비우기 실행
-                document.getElementById('nameInput').value = '';
-                document.getElementById('messageInput').value = '';
-                syncCloudContent(); burstConfetti();
+            database.ref('liveMessages').push({ name, text }).then(() => {
+                nameInput.value = ''; messageInput.value = ''; burstConfetti();
             });
         };
 
-        // 4구역 실제 스마트폰 갤러리 파일 다이렉트 연동 및 실시간 업로드 제어부
-        document.getElementById('uploadBtn').onclick = () => {
-            const fileInput = document.getElementById('imageInput');
-            if (fileInput.files.length === 0) { alert("갤러리에서 사진 파일을 선택해주세요!"); return; }
+        function displayComment(name, text) {
+            const div = document.createElement('div'); div.className = 'postit-item';
+            div.innerHTML = `<strong>📌 From. ${name}</strong>${text}`; commentList.appendChild(div);
+        }
 
-            const reader = new FileReader();
-            reader.onloadend = function () {
-                if(!liveCache.img) liveCache.img = [];
-                // 고용량 이미지 파일을 보안망 통과 규격으로 압축 변환 이식
-                liveCache.img.push(reader.result);
-                
-                fetch(SERVER_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(liveCache)
-                }).then(() => {
-                    fileInput.value = ''; // ⚡ [버그 정정] 전송 완료 후 파일 선택칸 즉시 초기화
-                    syncCloudContent(); burstConfetti();
+        // --- 📸 4구역: 구글 서버 내 폰 갤러리 연동 이미지 영구 적재 동기화 시스템 ---
+        const imageInput = document.getElementById('imageInput');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const galleryContainer = document.getElementById('galleryContainer');
+
+        database.ref('liveGallery').on('value', (snapshot) => {
+            galleryContainer.innerHTML = "";
+            const data = snapshot.val();
+            if(data) {
+                Object.values(data).forEach(url => {
+                    const card = document.createElement('div'); card.className = 'photo-card';
+                    const img = document.createElement('img'); img.src = url;
+                    const span = document.createElement('span'); span.innerText = `❤️ 가족 추억`;
+                    card.appendChild(img); card.appendChild(span); galleryContainer.appendChild(card);
                 });
             }
-            reader.readAsDataURL(fileInput.files[0]);
+        });
+
+        uploadBtn.onclick = () => {
+            if (imageInput.files.length === 0) { alert("갤러리에서 사진 파일을 선택해주세요!"); return; }
+            const file = imageInput.files[0];
+            const reader = new FileReader();
+            
+            reader.onloadend = function () {
+                database.ref('liveGallery').push(reader.result).then(() => {
+                    imageInput.value = ''; burstConfetti();
+                }).catch(() => {
+                    alert("사진 용량이 구글 무료 서버 한도를 초과했습니다. 조금 더 용량이 작은 사진을 선택해 주세요!");
+                });
+            }
+            reader.readAsDataURL(file);
         };
 
-        // --- 룰렛 구동 엔진 ---
+        // --- 🎪 3구역: 룰렛 연산 제어부 ---
         const wheel = document.getElementById('wheel'); const spinBtn = document.getElementById('spinBtn'); const couponResult = document.getElementById('couponResult');
         const coupons = ["💆 손주의 든든한 어깨 안마 30분 이용권!", "🎤 할머니가 부르면 언제든 달려가는 대기조 이용권!", "🍲 아인이가 차려드리는 맛있는 저녁 밥상권!", "😘 온 가족의 뽀뽀와 포옹 10회 이용권!"];
         let currentRotation = 0; let isSpinning = false;
