@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>할머니 생신 파티 🎉</title>
+<title>할머니 생신 🎉</title>
 
 <style>
 body{
-    font-family: sans-serif;
-    background: linear-gradient(90deg,#fff0f3,#ffe5ec);
     margin:0;
     padding:20px;
+    font-family:sans-serif;
+    background:linear-gradient(90deg,#fff0f3,#ffe5ec);
 }
 
 .container{
@@ -23,7 +23,7 @@ body{
     box-shadow:0 10px 20px rgba(255,182,193,0.3);
 }
 
-h1,h2,h3{ text-align:center; color:#ff4d7d; }
+h1,h2{text-align:center;color:#ff4d7d;}
 
 input,button{
     width:100%;
@@ -49,7 +49,7 @@ button{
     border-radius:12px;
 }
 
-/* 제비뽑기 */
+/* 룰렛 */
 .grid{
     display:grid;
     grid-template-columns:1fr 1fr;
@@ -68,20 +68,14 @@ button{
 .result{
     text-align:center;
     margin-top:10px;
-    color:#ff4d7d;
     font-weight:bold;
+    color:#ff4d7d;
 }
 
-/* 갤러리 */
-.gallery{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-}
-
-.card img{
-    width:100%;
-    border-radius:10px;
+/* 노래 버튼 */
+.songBtn{
+    background:#ffb3c6;
+    font-size:16px;
 }
 </style>
 </head>
@@ -90,6 +84,12 @@ button{
 
 <div class="container">
 <h1>🎉 할머니 생신 🎉</h1>
+<p style="text-align:center;">할머니 생신 축하드려요 😀</p>
+
+<!-- 🔥 생일 노래 버튼 -->
+<button class="songBtn" onclick="playSong()">
+🎵 생일 축하 노래 듣기
+</button>
 </div>
 
 <!-- 게시판 -->
@@ -103,7 +103,7 @@ button{
 <div id="posts"></div>
 </div>
 
-<!-- 제비뽑기 -->
+<!-- 룰렛 -->
 <div class="container">
 <h2>🎁 제비뽑기</h2>
 
@@ -117,63 +117,35 @@ button{
 <div class="result" id="result"></div>
 </div>
 
-<!-- 갤러리 -->
-<div class="container">
-<h2>🖼 갤러리 (실시간 공유)</h2>
-
-<input id="imgName" placeholder="설명">
-<input type="file" id="imgFile">
-<button onclick="upload()">업로드</button>
-
-<div id="gallery" class="gallery"></div>
-</div>
-
-<!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import {
-  getDatabase,
-  ref,
-  push,
-  onValue
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getDatabase, ref, push, onValue } 
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-import {
-  getStorage,
-  ref as sRef,
-  uploadBytes,
-  getDownloadURL
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
-
-/* 🔥 네 Firebase 설정 */
 const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_DOMAIN",
+  authDomain: "YOUR_AUTH_DOMAIN",
   databaseURL: "YOUR_DB_URL",
   projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_BUCKET",
-  messagingSenderId: "YOUR_ID",
   appId: "YOUR_APP_ID"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-const storage = getStorage(app);
 
-/* =====================
-   💌 게시판
-===================== */
-
-function sendPost(){
+/* 💌 게시판 */
+window.sendPost = function(){
     const name = document.getElementById("name").value;
     const msg = document.getElementById("msg").value;
+
+    if(!name || !msg) return alert("입력해");
 
     push(ref(db,"posts"),{
         name:name,
         msg:msg,
         time:Date.now()
     });
-}
+};
 
 onValue(ref(db,"posts"), snap=>{
     const box = document.getElementById("posts");
@@ -188,45 +160,15 @@ onValue(ref(db,"posts"), snap=>{
     });
 });
 
-/* =====================
-   🎁 제비뽑기
-===================== */
-function pick(v){
+/* 🎁 룰렛 */
+window.pick = function(v){
     document.getElementById("result").innerText = "당첨: " + v;
-}
+};
 
-/* =====================
-   🖼 갤러리 (Storage)
-===================== */
-
-async function upload(){
-    const file = document.getElementById("imgFile").files[0];
-    const name = document.getElementById("imgName").value;
-
-    const imgRef = sRef(storage,"images/" + Date.now());
-
-    await uploadBytes(imgRef,file);
-    const url = await getDownloadURL(imgRef);
-
-    push(ref(db,"gallery"),{
-        name:name,
-        url:url
-    });
-}
-
-onValue(ref(db,"gallery"), snap=>{
-    const g = document.getElementById("gallery");
-    g.innerHTML="";
-
-    snap.forEach(v=>{
-        const d = v.val();
-        g.innerHTML += `
-        <div class="card">
-            <img src="${d.url}">
-            <div>${d.name}</div>
-        </div>`;
-    });
-});
+/* 🎵 노래 */
+window.playSong = function(){
+    window.open("https://youtu.be/uoNK5xq2MhA?si=Zy7A0d0_lrKW8EVv","_blank");
+};
 </script>
 
 </body>
