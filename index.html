@@ -1,162 +1,238 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>할머니 생신 축하드려요!</title>
-    <script src="https://gstatic.com"></script>
-    <script src="https://gstatic.com"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
-    <style>
-        @import url('https://googleapis.com');
-        body { font-family: 'Nanum Gothic', sans-serif; background-image: linear-gradient(90deg, #fff0f3 50%, #ffe5ec 50%); background-size: 40px 100%; color: #4a373a; margin: 0; padding: 20px 20px 100px 20px; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
-        .container { max-width: 600px; width: 100%; background: white; padding: 25px; border-radius: 24px; box-shadow: 0 10px 25px rgba(255, 182, 193, 0.4); box-sizing: border-box; margin-bottom: 20px; position: relative; z-index: 10; border: 4px solid #ffccd5; outline: 4px dashed #ff7494; outline-offset: -12px; }
-        h1 { font-size: 28px; color: #ff7494; text-align: center; line-height: 1.4; word-break: keep-all; }
-        h2, h3 { color: #ff8fa9; text-align: center; margin-top: 10px; }
-        p { font-size: 18px; line-height: 1.6; text-align: center; color: #614f52; }
-        button, .btn-link { display: inline-block; width: 100%; padding: 15px; font-size: 18px; font-weight: bold; text-align: center; text-decoration: none; color: white; background-color: #ff7494; border: none; border-radius: 14px; cursor: pointer; box-shadow: 0 5px 0px #d95373, 0 8px 15px rgba(255, 116, 148, 0.3); transition: all 0.1s ease; margin: 15px 0; box-sizing: border-box; }
-        button:active, .btn-link:active { transform: translateY(4px); box-shadow: 0 1px 0px #d95373, 0 4px 6px rgba(255, 116, 148, 0.3); }
-        .btn-link { background-color: #ffb3c6; box-shadow: 0 5px 0px #d48c9e, 0 8px 15px rgba(255, 179, 198, 0.4); }
-        .btn-floating-confetti { position: fixed; bottom: 25px; right: 25px; width: 70px; height: 70px; border-radius: 50%; background-color: #ff4d7d; color: white; font-size: 32px; display: flex; justify-content: center; align-items: center; border: 4px solid white; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25); z-index: 999; cursor: pointer; }
-        .roulette-wrapper { position: relative; width: 290px; height: 290px; margin: 30px auto; }
-        .roulette-arrow { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 16px solid transparent; border-right: 16px solid transparent; border-top: 28px solid #ff4d7d; z-index: 40; }
-        .roulette-wheel { width: 100%; height: 100%; border-radius: 50%; position: relative; border: 10px solid #ff7494; box-shadow: 0 8px 20px rgba(0,0,0,0.15); transition: transform 4s cubic-bezier(0.1, 0.8, 0.1, 1); overflow: hidden; box-sizing: border-box; }
-        .wheel-piece { position: absolute; width: 50%; height: 50%; transform-origin: 100% 100%; }
-        .piece1 { background-color: #ffb3c6; transform: rotate(0deg); }
-        .piece2 { background-color: #ffe5ec; transform: rotate(90deg); }
-        .piece3 { background-color: #ff8fa9; transform: rotate(180deg); }
-        .piece4 { background-color: #ffccd5; transform: rotate(270deg); }
-        .wheel-text { position: absolute; width: 50%; height: 50%; transform-origin: 100% 100%; box-sizing: border-box; font-weight: 800; font-size: 14px; color: #4a373a; text-align: center; }
-        .wheel-text-inner { position: absolute; width: 110px; left: 10px; top: 45px; text-align: center; }
-        .roulette-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 48px; height: 48px; background: white; border-radius: 50%; border: 5px solid #ff7494; z-index: 35; }
-        #couponResult { text-align: center; font-size: 20px; font-weight: bold; color: #ff4d7d; background: #fff5f7; padding: 15px; border-radius: 14px; border: 2px dashed #ffb3c6; margin-top: 15px; display: none; }
-        input[type="text"], input[type="file"] { width: 100%; padding: 14px; font-size: 16px; border: 2px solid #ffe5ec; border-radius: 14px; margin-bottom: 12px; box-sizing: border-box; background-color: #fffafb; }
-        .postit-board { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; margin-top: 20px; }
-        .postit-item { background: #fff9a6; color: #3d3500; padding: 18px 15px; border-radius: 2px; box-shadow: 3px 5px 10px rgba(0, 0, 0, 0.1); font-size: 15px; line-height: 1.5; position: relative; transform: rotate(-1.5deg); word-break: break-all; }
-        .postit-item:nth-child(even) { transform: rotate(2deg); }
-        .postit-item::before { content: ""; position: absolute; top: -9px; left: 50%; transform: translateX(-50%); width: 50px; height: 18px; background-color: rgba(255, 255, 255, 0.5); }
-        .postit-item strong { display: block; font-size: 13px; color: #736500; border-bottom: 1px dashed rgba(0, 0, 0, 0.15); padding-bottom: 5px; margin-bottom: 8px; }
-        /* 🖼️ 복원된 갤러리 디자인 스타일 */
-        .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; margin-top: 20px; }
-        .photo-card { background: #ffffff; padding: 10px; border-radius: 14px; border: 2px solid #ffe5ec; box-shadow: 0 5px 12px rgba(255, 182, 193, 0.2); box-sizing: border-box; }
-        .photo-card img { width: 100%; height: auto; border-radius: 10px; display: block; }
-        .photo-card span { display: block; text-align: center; font-size: 12px; font-weight: bold; color: #ff7494; margin-top: 8px; }
-        hr { border: 0; height: 2px; background: #ffe5ec; margin: 30px 0; }
-        .confetti-piece { position: fixed; width: 10px; height: 10px; border-radius: 50%; z-index: 999; pointer-events: none; animation: fall linear forwards; }
-        @keyframes fall { 0% { transform: translateY(-20px) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>할머니 생신 축하드려요!</title>
+
+<style>
+body {
+    font-family: 'Nanum Gothic', sans-serif;
+    background: linear-gradient(90deg, #fff0f3 50%, #ffe5ec 50%);
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+    min-height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 컨테이너 */
+.container {
+    max-width: 600px;
+    width: 100%;
+    background: white;
+    padding: 22px;
+    border-radius: 24px;
+    margin-bottom: 20px;
+    border: 4px solid #ffccd5;
+    box-shadow: 0 10px 25px rgba(255, 182, 193, 0.4);
+    box-sizing: border-box;
+    overflow: hidden; /* ✔ 오른쪽 튀어나옴 방지 */
+}
+
+/* 제목 */
+h1 {
+    font-size: 24px;
+    color: #ff4d7d;
+    text-align: center;
+}
+
+h2, h3 {
+    text-align: center;
+    color: #ff7a9a;
+}
+
+/* 설명 */
+p {
+    text-align: center;
+    font-size: 15px;
+    color: #555;
+}
+
+/* 버튼 */
+button, .music-btn {
+    width: 100%;
+    display: block;
+    padding: 12px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #ff4d7d, #ff8fa9);
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    text-align: center;
+    text-decoration: none;
+    margin-top: 10px;
+    box-sizing: border-box;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+/* 게시판 */
+input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 12px;
+    border: 2px solid #ffd1dc;
+    box-sizing: border-box;
+}
+
+.postit-board {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+}
+
+.postit-item {
+    background: #fff9a6;
+    padding: 12px;
+    border-radius: 10px;
+}
+
+/* 제비뽑기 */
+.lottery {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.lottery div {
+    background: linear-gradient(135deg, #fff5b7, #ffd6e7);
+    padding: 18px;
+    border-radius: 14px;
+    text-align: center;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.result {
+    text-align: center;
+    margin-top: 10px;
+    font-weight: bold;
+    color: #ff4d7d;
+}
+
+/* 갤러리 */
+.photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+}
+
+.photo-card {
+    background: white;
+    border-radius: 14px;
+    border: 2px solid #ffe5ec;
+    padding: 8px;
+}
+
+.photo-card img {
+    width: 100%;
+    border-radius: 10px;
+}
+</style>
 </head>
+
 <body>
-    <button class="btn-floating-confetti" onclick="burstConfetti()">🎉</button>
-    
-    <!-- 1구역: 타이틀 -->
-    <div class="container">
-        <h1> 🎉 세상에서 가장 특별한<br>우리 할머니의 생일파티 🎉 </h1>
-        <p> 할머니 생신 축하드려요 😀 </p>
-        <p> 잠깐 잠깐 보기 전에 잠깐 생일 축하 노래를 한번 불러볼까요? </p>
-        <a href="https://youtu.be" target="_blank" class="btn-link">🎵 노래 재생 </a>
+
+<!-- 1 -->
+<div class="container">
+    <h1>🎉 할머니 생신 축하드려요 😀</h1>
+
+    <p>잠깐 보기 전에 생일 축하 노래를 한번 불러볼까요?</p>
+
+    <a class="music-btn"
+       href="https://youtu.be/uoNK5xq2MhA?si=Zy7A0d0_lrKW8EVv"
+       target="_blank">
+        🎵 노래 재생
+    </a>
+</div>
+
+<!-- 2 게시판 -->
+<div class="container">
+    <h3>💌 게시판</h3>
+
+    <input id="name" placeholder="이름">
+    <input id="msg" placeholder="메시지">
+    <button onclick="addPost()">등록</button>
+
+    <div id="board" class="postit-board"></div>
+</div>
+
+<!-- 3 제비뽑기 -->
+<div class="container">
+    <h3>🎁 효도 제비뽑기</h3>
+
+    <div class="lottery">
+        <div onclick="pick('안마쿠폰 💆')">❓</div>
+        <div onclick="pick('뽀뽀포옹 😘')">❓</div>
+        <div onclick="pick('저녁밥상 🍲')">❓</div>
+        <div onclick="pick('출동대기 🎤')">❓</div>
     </div>
 
-    <!-- 2구역: 축하 편지 보드 (원래 순서대로 위로 복귀) -->
-    <div class="container">
-        <h3>💌 할머니께 보내는 축하 포스트잇 편지</h3>
-        <div>
-            <input type="text" id="nameInput" placeholder="이름 (예: 큰아들, 손주 아인이)">
-            <input type="text" id="messageInput" placeholder="축하 메시지를 입력하세요">
-            <button id="submitBtn">✏️ 축하 편지 실시간 공유 등록</button>
-        </div>
-        <div id="commentList" class="postit-board"></div>
-    </div>
+    <div class="result" id="result"></div>
+</div>
 
-    <!-- 3구역: 효도 룰렛 게임 -->
-    <div class="container">
-        <h2>🎁 돌려돌려~ 할머니 효도 룰렛!</h2>
-        <p>원판을 돌려 오늘의 효도 선물을 확인해 보세요!</p>
-        <div class="roulette-wrapper">
-            <div class="roulette-arrow"></div>
-            <div id="wheel" class="roulette-wheel">
-                <div class="wheel-piece piece1"></div><div class="wheel-piece piece2"></div><div class="wheel-piece piece3"></div><div class="wheel-piece piece4"></div>
-                <div class="wheel-text" style="transform: rotate(0deg);"><div class="wheel-text-inner" style="transform: rotate(45deg);">안마쿠폰 💆</div></div>
-                <div class="wheel-text" style="transform: rotate(90deg);"><div class="wheel-text-inner" style="transform: rotate(45deg);">출동대기 🎤</div></div>
-                <div class="wheel-text" style="transform: rotate(180deg);"><div class="wheel-text-inner" style="transform: rotate(45deg);">저녁밥상 🍲</div></div>
-                <div class="wheel-text" style="transform: rotate(270deg);"><div class="wheel-text-inner" style="transform: rotate(45deg);">뽀뽀포옹 😘</div></div>
-            </div>
-            <div class="roulette-center"></div>
-        </div>
-        <button onclick="spinRoulette()">🎯 룰렛 돌리기</button>
-        <div id="couponResult"></div>
-    </div>
+<!-- 4 갤러리 -->
+<div class="container">
+    <h3>🖼️ 갤러리</h3>
 
-    <!-- 4구역: 완전 독립 분리된 백색 액자 갤러리 보드 (완벽 복원!) -->
-    <div class="container">
-        <h2>🖼️ 우리 가족 추억 갤러리</h2>
-        <p>할머니와의 소중한 순간들이 담긴 사진첩입니다.</p>
-        <div class="photo-grid">
-            <div class="photo-card">
-                <img src="https://picsum.photos" alt="가족사진">
-                <span>📸 즐거운 가족 여행</span>
-            </div>
-            <div class="photo-card">
-                <img src="https://picsum.photos" alt="가족사진">
-                <span>🎂 할머니 생신 파티</span>
-            </div>
-        </div>
-    </div>
-    <script>
-        firebase.initializeApp(config);
+    <input id="imgName" placeholder="설명">
+    <input type="file" id="imgFile">
+    <button onclick="upload()">업로드</button>
 
-const db = firebase.database();
-const storage = firebase.storage();
-        const config = {
-    apiKey: "AIzaSyAHF0aSqAGZ6N61MEP8SMUOLDYnXfrXVX8",
-    authDomain: "grandma-birthday.firebaseapp.com",
-    databaseURL: "https://grandma-birthday-default-rtdb.firebaseio.com",
-    projectId: "grandma-birthday",
-    storageBucket: "grandma-birthday.appspot.com",
-    messagingSenderId: "826104826047",
-    appId: "1:826104826047:web:0c774d0289d03de0b89e0"
-};
-        firebase.initializeApp(config);
-        const db = firebase.database().ref('comments');
-        document.getElementById('submitBtn').addEventListener('click', () => {
-            const n = document.getElementById('nameInput').value.trim(), m = document.getElementById('messageInput').value.trim();
-            if (!n || !m) return alert('이름과 메시지를 적어주세요! 🥰');
-            db.push({ name: n, message: m, timestamp: Date.now() });
-            document.getElementById('nameInput').value = ''; document.getElementById('messageInput').value = '';
-        });
-        db.on('value', snap => {
-            const list = document.getElementById('commentList'); list.innerHTML = '';
-            snap.forEach(child => {
-                const data = child.val(), el = document.createElement('div'); el.className = 'postit-item';
-                el.innerHTML = `<strong>From. ${esc(data.name)}</strong>${esc(data.message)}`; list.appendChild(el);
-            });
-        });
-        function esc(t) { return t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
-        let spinning = false;
-        function spinRoulette() {
-            if (spinning) return; spinning = true;
-            const wheel = document.getElementById('wheel'), res = document.getElementById('couponResult'); res.style.display = 'none';
-            const deg = (360 * 5) + Math.floor(Math.random() * 360); wheel.style.transform = `rotate(${deg}deg)`;
-            setTimeout(() => {
-                const act = (360 - (deg % 360)) % 360; let p = "";
-                if (act >= 0 && act < 90) p = "안마쿠폰 💆 (시원하게 안마해 드릴게요!)";
-                else if (act >= 90 && act < 180) p = "뽀뽀포옹 😘 (사랑을 가득 담아 안아드려요!)";
-                else if (act >= 180 && act < 270) p = "저녁밥상 🍲 (맛있는 한 끼를 대접합니다!)";
-                else p = "출동대기 🎤 (언제든 부르시면 달려갑니다!)";
-                res.innerHTML = `🎉 당첨 결과: ${p}`; res.style.display = 'block'; spinning = false; burstConfetti();
-            }, 4000);
-        }
-        function burstConfetti() {
-            const colors = ['#ff4d7d', '#ffb3c6', '#ffe5ec', '#ffccd5', '#fff9a6', '#4ad3ff'];
-            for (let i = 0; i < 40; i++) {
-                const c = document.createElement('div'); c.className = 'confetti-piece';
-                c.style.left = Math.random() * 100 + 'vw'; c.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                c.style.animationDuration = (Math.random() * 2 + 1) + 's'; c.style.animationDelay = Math.random() * 0.2 + 's';
-                document.body.appendChild(c); c.addEventListener('animationend', () => c.remove());
-            }
-        }
-    </script>
+    <div id="gallery" class="photo-grid"></div>
+</div>
+
+<script>
+/* 게시판 */
+function addPost(){
+    const name = document.getElementById("name").value;
+    const msg = document.getElementById("msg").value;
+
+    const div = document.createElement("div");
+    div.className = "postit-item";
+    div.innerHTML = `<b>${name}</b><br>${msg}`;
+
+    document.getElementById("board").appendChild(div);
+}
+
+/* 제비뽑기 */
+function pick(t){
+    const r = document.getElementById("result");
+    r.innerText = "뽑는 중...";
+    setTimeout(() => {
+        r.innerText = "🎉 당첨: " + t;
+    }, 500);
+}
+
+/* 갤러리 (로컬용) */
+function upload(){
+    const file = document.getElementById("imgFile").files[0];
+    const name = document.getElementById("imgName").value;
+
+    if(!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e){
+        const div = document.createElement("div");
+        div.className = "photo-card";
+        div.innerHTML = `
+            <img src="${e.target.result}">
+            <div>${name}</div>
+        `;
+        document.getElementById("gallery").appendChild(div);
+    }
+    reader.readAsDataURL(file);
+}
+</script>
+
 </body>
 </html>
