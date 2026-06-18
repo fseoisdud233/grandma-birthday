@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>할머니 생신 축하드려요!</title>
-    <!-- 구글 파이어베이스 라이브러리 연동 (ReferenceError 해결) -->
     <script src="https://gstatic.com"></script>
     <script src="https://gstatic.com"></script>
     <style>
@@ -76,36 +75,25 @@
     </div>
     <script>
         const config = {
-            apiKey: "YOUR_API_KEY", authDomain: "YOUR_PROJECT_://firebaseapp.com",
-            databaseURL: "https://YOUR_PROJECT_://firebaseio.com",
-            projectId: "YOUR_PROJECT_ID", storageBucket: "YOUR_PROJECT_://appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID", appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyAHF0aSqAGZ6N61MEP8SMUOLDYnXfrXVX8", authDomain: "://firebaseapp.com",
+            databaseURL: "https://firebaseio.com", projectId: "grandma-birthday",
+            storageBucket: "grandma-birthday.firebasestorage.app", messagingSenderId: "826104826047", appId: "1:826104826047:web:0c774d0289d03de0b89e0a", measurementId: "G-RRRKVE9C03"
         };
-        if (config.apiKey !== "YOUR_API_KEY") {
-            firebase.initializeApp(config);
-            const db = firebase.database().ref('comments');
-            document.getElementById('submitBtn').addEventListener('click', () => {
-                const n = document.getElementById('nameInput').value.trim(), m = document.getElementById('messageInput').value.trim();
-                if (!n || !m) return alert('이름과 메시지를 적어주세요!');
-                db.push({ name: n, message: m, timestamp: Date.now() });
-                document.getElementById('nameInput').value = ''; document.getElementById('messageInput').value = '';
+        firebase.initializeApp(config);
+        const db = firebase.database().ref('comments');
+        document.getElementById('submitBtn').addEventListener('click', () => {
+            const n = document.getElementById('nameInput').value.trim(), m = document.getElementById('messageInput').value.trim();
+            if (!n || !m) return alert('이름과 메시지를 적어주세요! 🥰');
+            db.push({ name: n, message: m, timestamp: Date.now() });
+            document.getElementById('nameInput').value = ''; document.getElementById('messageInput').value = '';
+        });
+        db.on('value', snap => {
+            const list = document.getElementById('commentList'); list.innerHTML = '';
+            snap.forEach(child => {
+                const data = child.val(), el = document.createElement('div'); el.className = 'postit-item';
+                el.innerHTML = `<strong>From. ${esc(data.name)}</strong>${esc(data.message)}`; list.appendChild(el);
             });
-            db.on('value', snap => {
-                const list = document.getElementById('commentList'); list.innerHTML = '';
-                snap.forEach(child => {
-                    const data = child.val(), el = document.createElement('div'); el.className = 'postit-item';
-                    el.innerHTML = `<strong>From. ${esc(data.name)}</strong>${esc(data.message)}`; list.appendChild(el);
-                });
-            });
-        } else {
-            document.getElementById('submitBtn').addEventListener('click', () => {
-                const n = document.getElementById('nameInput').value.trim(), m = document.getElementById('messageInput').value.trim();
-                if(!n || !m) return alert('내용을 채워주세요!');
-                const el = document.createElement('div'); el.className = 'postit-item';
-                el.innerHTML = `<strong>From. ${esc(n)}</strong>${esc(m)}`; document.getElementById('commentList').appendChild(el);
-                document.getElementById('nameInput').value = ''; document.getElementById('messageInput').value = '';
-            });
-        }
+        });
         function esc(t) { return t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
         let spinning = false;
         function spinRoulette() {
