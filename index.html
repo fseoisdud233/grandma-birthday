@@ -50,7 +50,7 @@
         .wheel-text-inner { position: absolute; width: 110px; left: 10px; top: 45px; text-align: center; }
         .roulette-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 48px; height: 48px; background: white; border-radius: 50%; border: 5px solid #ff7494; z-index: 35; }
         #couponResult { text-align: center; font-size: 20px; font-weight: bold; color: #ff4d7d; background: #fff5f7; padding: 15px; border-radius: 14px; border: 2px dashed #ffb3c6; margin-top: 15px; min-height: 30px; }
-        input[type="text"] { width: 100%; padding: 14px; font-size: 16px; border: 2px solid #ffe5ec; border-radius: 14px; margin-bottom: 12px; box-sizing: border-box; background-color: #fffafb; }
+        input[type="text"], input[type="file"] { width: 100%; padding: 14px; font-size: 16px; border: 2px solid #ffe5ec; border-radius: 14px; margin-bottom: 12px; box-sizing: border-box; background-color: #fffafb; }
         .postit-board { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; margin-top: 20px; }
         .postit-item { background: #fff9a6; color: #3d3500; padding: 18px 15px; border-radius: 2px; box-shadow: 3px 5px 10px rgba(0, 0, 0, 0.1); font-size: 15px; line-height: 1.5; position: relative; transform: rotate(-1.5deg); word-break: break-all; }
         .postit-item:nth-child(even) { transform: rotate(2deg); }
@@ -75,7 +75,7 @@
         <div>
             <input type="text" id="nameInput" placeholder="이름 (예: 큰아들, 손주)">
             <input type="text" id="messageInput" placeholder="축하 메시지를 입력하세요">
-            <button id="submitBtn">✏️ 전세계 실시간 등록</button>
+            <button id="submitBtn">✏️ 포스트잇 붙이기</button>
         </div>
         <div id="commentList" class="postit-board"></div>
     </div>
@@ -98,8 +98,9 @@
     </div>
     <div class="container">
         <h3>📸 추억 사진 올리기</h3>
-        <input type="text" id="externalUrlInput" placeholder="인터넷 이미지 주소(https://...) 링크를 넣어주세요">
-        <button id="uploadBtn" style="background-color: #10ac84; box-shadow: 0 5px 0px #0d8566;">🖼️ 실시간 사진 등록</button>
+        <input type="file" id="imageInput" accept="image/*">
+        <input type="text" id="externalUrlInput" placeholder="또는 인터넷 이미지 주소(https://...) 링크 입력">
+        <button id="uploadBtn" style="background-color: #10ac84; box-shadow: 0 5px 0px #0d8566;">🖼️ 사진 포스트잇 등록</button>
         <hr><h2 style="font-size: 22px; color: #614f52; margin-top: 0; text-align: left;">🖼️ 우리 가족 추억 사진첩</h2>
         <div id="galleryContainer" class="postit-board"></div>
     </div>
@@ -116,42 +117,54 @@
                 setTimeout(() => { piece.remove(); }, (duration + 0.3) * 1000);
             }
         }
-        const DB_URL = "https://firebaseio.com";
-        function loadLiveContent() {
-            fetch(DB_URL + "messages.json").then(res => res.json()).then(data => {
-                document.getElementById('commentList').innerHTML = "";
-                if(data) { Object.values(data).forEach(comment => displayComment(comment.name, comment.text)); }
-            });
-            fetch(DB_URL + "gallery.json").then(res => res.json()).then(data => {
-                document.getElementById('galleryContainer').innerHTML = "";
-                if(data) { Object.values(data).forEach(photo => displayImageInGallery(photo.url, photo.date)); }
-            });
-        }
-        window.onload = () => { loadLiveContent(); setInterval(loadLiveContent, 4000); };
-        document.getElementById('submitBtn').onclick = () => {
-            const name = document.getElementById('nameInput').value.trim();
-            const text = document.getElementById('messageInput').value.trim();
+        window.addEventListener('DOMContentLoaded', () => { burstConfetti(); });
+
+        const nameInput = document.getElementById('nameInput');
+        const messageInput = document.getElementById('messageInput');
+        const submitBtn = document.getElementById('submitBtn');
+        const commentList = document.getElementById('commentList');
+
+        const savedComments = JSON.parse(localStorage.getItem('grandmaComments')) || [];
+        savedComments.forEach(comment => displayComment(comment.name, comment.text));
+
+        submitBtn.onclick = () => {
+            const name = nameInput.value.trim();
+            const text = messageInput.value.trim();
             if (!name || !text) { alert("이름과 메시지를 모두 입력해주세요!"); return; }
-            fetch(DB_URL + "messages.json", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name, text }) }).then(() => {
-                document.getElementById('nameInput').value = ''; document.getElementById('messageInput').value = ''; loadLiveContent(); burstConfetti();
-            });
+            displayComment(name, text);
+            savedComments.push({ name: name, text: text });
+            localStorage.setItem('grandmaComments', JSON.stringify(savedComments));
+            nameInput.value = ''; messageInput.value = ''; burstConfetti();
         };
+
         function displayComment(name, text) {
             const div = document.createElement('div'); div.className = 'postit-item';
-            div.innerHTML = `<strong>📌 From. ${name}</strong>${text}`; document.getElementById('commentList').appendChild(div);
+            div.innerHTML = `<strong>📌 From. ${name}</strong>${text}`; commentList.appendChild(div);
         }
-        document.getElementById('uploadBtn').onclick = () => {
-            const url = document.getElementById('externalUrlInput').value.trim(); if (!url) { alert("링크를 넣어주세요!"); return; }
-            const today = new Date(); const dateStr = `${today.getFullYear()}.${today.getMonth()+1}.${today.getDate()}`;
-            fetch(DB_URL + "gallery.json", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ url: url, date: dateStr }) }).then(() => {
-                document.getElementById('externalUrlInput').value = ''; loadLiveContent(); burstConfetti();
-            });
+
+        const imageInput = document.getElementById('imageInput');
+        const externalUrlInput = document.getElementById('externalUrlInput');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const galleryContainer = document.getElementById('galleryContainer');
+
+        uploadBtn.onclick = () => {
+            let finalImageUrl = "";
+            if (externalUrlInput.value.trim() !== "") { finalImageUrl = externalUrlInput.value.trim(); }
+            else if (imageInput.files.length > 0) { finalImageUrl = URL.createObjectURL(imageInput.files[0]); }
+            else { alert("사진 파일을 선택하거나 링크를 입력해주세요!"); return; }
+            addImageToGallery(finalImageUrl);
+            imageInput.value = ''; externalUrlInput.value = ''; burstConfetti();
         };
-        function displayImageInGallery(url, dateStr) {
+
+        function addImageToGallery(url) {
             const item = document.createElement('div'); item.className = 'postit-item';
-            item.innerHTML = `<strong>📸 추억 한 장 (${dateStr})</strong>`; const img = document.createElement('img'); img.src = url;
-            img.onerror = function() { item.remove(); }; item.appendChild(img); document.getElementById('galleryContainer').appendChild(item);
+            const today = new Date(); const dateStr = `${today.getFullYear()}.${today.getMonth()+1}.${today.getDate()}`;
+            item.innerHTML = `<strong>📸 추억 한 장 (${dateStr})</strong>`;
+            const img = document.createElement('img'); img.src = url;
+            img.onerror = function() { alert("이미지 주소가 올바르지 않습니다."); item.remove(); };
+            item.appendChild(img); galleryContainer.appendChild(item);
         }
+
         const wheel = document.getElementById('wheel'); const spinBtn = document.getElementById('spinBtn'); const couponResult = document.getElementById('couponResult');
         const coupons = ["💆 손주의 든든한 어깨 안마 30분 이용권!", "🎤 할머니가 부르면 언제든 달려가는 대기조 이용권!", "🍲 아인이가 차려드리는 맛있는 저녁 밥상권!", "😘 온 가족의 뽀뽀와 포옹 10회 이용권!"];
         let currentRotation = 0; let isSpinning = false;
