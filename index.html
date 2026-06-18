@@ -23,7 +23,10 @@ body{
     box-shadow:0 10px 20px rgba(255,182,193,0.3);
 }
 
-h1,h2{text-align:center;color:#ff4d7d;}
+h1,h2{
+    text-align:center;
+    color:#ff4d7d;
+}
 
 input,button{
     width:100%;
@@ -73,9 +76,8 @@ button{
 }
 
 /* 노래 버튼 */
-.songBtn{
+.song{
     background:#ffb3c6;
-    font-size:16px;
 }
 </style>
 </head>
@@ -84,21 +86,19 @@ button{
 
 <div class="container">
 <h1>🎉 할머니 생신 🎉</h1>
-<p style="text-align:center;">할머니 생신 축하드려요 😀</p>
 
-<!-- 🔥 생일 노래 버튼 -->
-<button class="songBtn" onclick="playSong()">
+<button class="song" onclick="window.open('https://youtu.be/uoNK5xq2MhA?si=Zy7A0d0_lrKW8EVv')">
 🎵 생일 축하 노래 듣기
 </button>
 </div>
 
 <!-- 게시판 -->
 <div class="container">
-<h2>💌 게시판 (실시간 공유)</h2>
+<h2>💌 게시판</h2>
 
 <input id="name" placeholder="이름">
 <input id="msg" placeholder="메시지">
-<button onclick="sendPost()">등록</button>
+<button onclick="send()">등록</button>
 
 <div id="posts"></div>
 </div>
@@ -117,32 +117,36 @@ button{
 <div class="result" id="result"></div>
 </div>
 
+<!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, push, onValue } 
 from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
+/* 🔥 여기만 네 Firebase 값 넣어 */
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  databaseURL: "YOUR_DB_URL",
-  projectId: "YOUR_PROJECT_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyXXXX",
+  authDomain: "grandma-birthday.firebaseapp.com",
+  databaseURL: "https://grandma-birthday-default-rtdb.firebaseio.com",
+  projectId: "grandma-birthday",
+  storageBucket: "grandma-birthday.appspot.com",
+  messagingSenderId: "826104826047",
+  appId: "1:826104826047:web:xxxx"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 /* 💌 게시판 */
-window.sendPost = function(){
-    const name = document.getElementById("name").value;
-    const msg = document.getElementById("msg").value;
+window.send = function(){
+    const n = document.getElementById("name").value;
+    const m = document.getElementById("msg").value;
 
-    if(!name || !msg) return alert("입력해");
+    if(!n || !m) return alert("입력해");
 
     push(ref(db,"posts"),{
-        name:name,
-        msg:msg,
+        name:n,
+        msg:m,
         time:Date.now()
     });
 };
@@ -163,11 +167,6 @@ onValue(ref(db,"posts"), snap=>{
 /* 🎁 룰렛 */
 window.pick = function(v){
     document.getElementById("result").innerText = "당첨: " + v;
-};
-
-/* 🎵 노래 */
-window.playSong = function(){
-    window.open("https://youtu.be/uoNK5xq2MhA?si=Zy7A0d0_lrKW8EVv","_blank");
 };
 </script>
 
