@@ -70,92 +70,48 @@
         }
 
         .btn-floating-confetti {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            background-color: #ff4d7d;
-            color: white;
-            font-size: 32px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border: 4px solid white;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-            z-index: 999;
-            cursor: pointer;
-            margin: 0; padding: 0;
+            position: fixed; bottom: 25px; right: 25px;
+            width: 70px; height: 70px; border-radius: 50%;
+            background-color: #ff4d7d; color: white; font-size: 32px;
+            display: flex; justify-content: center; align-items: center;
+            border: 4px solid white; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+            z-index: 999; cursor: pointer; margin: 0; padding: 0;
         }
 
-        /* 🎪 룰렛 해상도 및 물리 구조 고정 */
         .roulette-wrapper {
-            position: relative;
-            width: 290px;
-            height: 290px;
-            margin: 30px auto;
+            position: relative; width: 290px; height: 290px; margin: 30px auto;
         }
 
         .roulette-arrow {
-            position: absolute;
-            top: -20px; left: 50%;
-            transform: translateX(-50%);
-            width: 0; height: 0;
-            border-left: 16px solid transparent;
-            border-right: 16px solid transparent;
-            border-top: 28px solid #ff4d7d;
-            z-index: 40;
+            position: absolute; top: -20px; left: 50%;
+            transform: translateX(-50%); width: 0; height: 0;
+            border-left: 16px solid transparent; border-right: 16px solid transparent;
+            border-top: 28px solid #ff4d7d; z-index: 40;
         }
 
         .roulette-wheel {
-            width: 100%; height: 100%;
-            border-radius: 50%;
-            position: relative;
-            border: 10px solid #ff7494;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            width: 100%; height: 100%; border-radius: 50%; position: relative;
+            border: 10px solid #ff7494; box-shadow: 0 8px 20px rgba(0,0,0,0.15);
             transition: transform 3.5s cubic-bezier(0.1, 0.8, 0.1, 1);
-            overflow: hidden;
-            box-sizing: border-box;
+            overflow: hidden; box-sizing: border-box;
         }
 
-        .wheel-piece {
-            position: absolute;
-            width: 50%; height: 50%;
-            transform-origin: 100% 100%;
-        }
+        .wheel-piece { position: absolute; width: 50%; height: 50%; transform-origin: 100% 100%; }
         .piece1 { background-color: #ffb3c6; transform: rotate(0deg); }
         .piece2 { background-color: #ffe5ec; transform: rotate(90deg); }
         .piece3 { background-color: #ff8fa9; transform: rotate(180deg); }
         .piece4 { background-color: #ffccd5; transform: rotate(270deg); }
 
-        .wheel-text {
-            position: absolute;
-            width: 50%; height: 50%;
-            transform-origin: 100% 100%;
-            box-sizing: border-box;
-        }
-
+        .wheel-text { position: absolute; width: 50%; height: 50%; transform-origin: 100% 100%; box-sizing: border-box; }
         .wheel-text-inner {
-            position: absolute;
-            width: 110px;
-            left: 10px;
-            top: 45px;
-            text-align: center;
-            font-weight: 800;
-            font-size: 14px;
-            color: #4a373a;
+            position: absolute; width: 110px; left: 10px; top: 45px;
+            text-align: center; font-weight: 800; font-size: 14px; color: #4a373a;
         }
 
         .roulette-center {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 48px; height: 48px;
-            background: white;
-            border-radius: 50%;
-            border: 5px solid #ff7494;
-            z-index: 35;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 48px; height: 48px; background: white; border-radius: 50%;
+            border: 5px solid #ff7494; z-index: 35;
         }
 
         #couponResult {
@@ -167,52 +123,34 @@
         input[type="text"], input[type="file"] {
             width: 100%; padding: 14px; font-size: 16px;
             border: 2px solid #ffe5ec; border-radius: 14px;
-            margin-bottom: 12px; box-sizing: border-box;
-            background-color: #fffafb;
+            margin-bottom: 12px; box-sizing: border-box; background-color: #fffafb;
         }
 
         .postit-board {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; margin-top: 20px;
         }
 
         .postit-item {
-            background: #fff9a6;
-            color: #3d3500;
-            padding: 18px 15px;
-            border-radius: 2px;
-            box-shadow: 3px 5px 10px rgba(0, 0, 0, 0.1);
-            font-size: 15px;
-            line-height: 1.5;
-            position: relative;
-            transform: rotate(-1.5deg);
-            word-break: break-all;
+            background: #fff9a6; color: #3d3500; padding: 18px 15px; border-radius: 2px;
+            box-shadow: 3px 5px 10px rgba(0, 0, 0, 0.1); font-size: 15px; line-height: 1.5;
+            position: relative; transform: rotate(-1.5deg); word-break: break-all;
         }
         .postit-item:nth-child(even) { transform: rotate(2deg); }
         .postit-item::before {
             content: ""; position: absolute; top: -9px; left: 50%;
-            transform: translateX(-50%); width: 50px; height: 18px;
-            background-color: rgba(255, 255, 255, 0.5);
+            transform: translateX(-50%); width: 50px; height: 18px; background-color: rgba(255, 255, 255, 0.5);
         }
 
         .postit-item strong {
             display: block; font-size: 13px; color: #736500;
-            border-bottom: 1px dashed rgba(0, 0, 0, 0.15);
-            padding-bottom: 5px; margin-bottom: 8px;
+            border-bottom: 1px dashed rgba(0, 0, 0, 0.15); padding-bottom: 5px; margin-bottom: 8px;
         }
 
-        .postit-item img {
-            width: 100%; height: auto;
-            border-radius: 4px; margin-top: 8px;
-        }
-
+        .postit-item img { width: 100%; height: auto; border-radius: 4px; margin-top: 8px; }
         hr { border: 0; height: 2px; background: #ffe5ec; margin: 30px 0; }
 
         .confetti-piece {
-            position: fixed; width: 10px; height: 10px;
-            border-radius: 50%; z-index: 999;
+            position: fixed; width: 10px; height: 10px; border-radius: 50%; z-index: 999;
             pointer-events: none; animation: fall linear forwards;
         }
         @keyframes fall {
@@ -237,7 +175,7 @@
         <div>
             <input type="text" id="nameInput" placeholder="이름 (예: 큰아들, 손주)">
             <input type="text" id="messageInput" placeholder="축하 메시지를 입력하세요">
-            <button id="submitBtn">✏️ 포스트잇 붙이기</button>
+            <button id="submitBtn">✏️ 전세계 실시간 등록</button>
         </div>
         <div id="commentList" class="postit-board"></div>
     </div>
@@ -265,9 +203,8 @@
 
     <div class="container">
         <h3>📸 추억 사진 올리기</h3>
-        <input type="file" id="imageInput" accept="image/*">
-        <input type="text" id="externalUrlInput" placeholder="또는 인터넷 사진 주소(https://...) 링크 입력">
-        <button id="uploadBtn" style="background-color: #10ac84; box-shadow: 0 5px 0px #0d8566;">🖼️ 사진 포스트잇 등록</button>
+        <input type="text" id="externalUrlInput" placeholder="인터넷 이미지 주소(https://...) 링크를 넣어주세요">
+        <button id="uploadBtn" style="background-color: #10ac84; box-shadow: 0 5px 0px #0d8566;">🖼️ 실시간 사진 등록</button>
         <hr>
         <h2 style="font-size: 22px; color: #614f52; margin-top: 0; text-align: left;">🖼️ 우리 가족 추억 사진첩</h2>
         <div id="galleryContainer" class="postit-board"></div>
@@ -277,117 +214,125 @@
         function burstConfetti() {
             const colors = ['#ff7494', '#ffb3c6', '#ffccd5', '#ffe5ec', '#feca57', '#4cd137'];
             for (let i = 0; i < 70; i++) {
-                const piece = document.createElement('div');
-                piece.className = 'confetti-piece';
-                piece.style.left = Math.random() * 100 + 'vw';
-                piece.style.top = '-10px';
+                const piece = document.createElement('div'); piece.className = 'confetti-piece';
+                piece.style.left = Math.random() * 100 + 'vw'; piece.style.top = '-10px';
                 piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
                 piece.style.transform = `scale(${Math.random() * 0.8 + 0.4})`;
-                const duration = Math.random() * 2 + 1.5;
-                piece.style.animationDuration = duration + 's';
-                piece.style.animationDelay = Math.random() * 0.3 + 's';
-                document.body.appendChild(piece);
+                const duration = Math.random() * 2 + 1.5; piece.style.animationDuration = duration + 's';
+                piece.style.animationDelay = Math.random() * 0.3 + 's'; document.body.appendChild(piece);
                 setTimeout(() => { piece.remove(); }, (duration + 0.3) * 1000);
             }
         }
-
         window.addEventListener('DOMContentLoaded', () => { burstConfetti(); });
 
-        const nameInput = document.getElementById('nameInput');
-        const messageInput = document.getElementById('messageInput');
-        const submitBtn = document.getElementById('submitBtn');
-        const commentList = document.getElementById('commentList');
+        // 🔗 ⚡ [핵심 연동] 서버 없이 전 세계 실시간 데이터 연동이 가능한 무료 Firebase 실시간 API 연동 구역
+        const DB_URL = "https://firebaseio.com";
 
-        const savedComments = JSON.parse(localStorage.getItem('grandmaComments')) || [];
-        savedComments.forEach(comment => displayComment(comment.name, comment.text));
+        // 데이터 서버로부터 메시지 받아오기 전용 함수
+        function loadLiveContent() {
+            // 1. 축하 메시지 로드
+            fetch(`${DB_URL}/messages.json`)
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('commentList').innerHTML = "";
+                if(data) {
+                    Object.values(data).forEach(comment => {
+                        displayComment(comment.name, comment.text);
+                    });
+                }
+            });
 
-        submitBtn.onclick = () => {
-            const name = nameInput.value.trim();
-            const text = messageInput.value.trim();
+            // 2. 외부 이미지 링크 사진첩 로드
+            fetch(`${DB_URL}/gallery.json`)
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('galleryContainer').innerHTML = "";
+                if(data) {
+                    Object.values(data).forEach(photo => {
+                        displayImageInGallery(photo.url, photo.date);
+                    });
+                }
+            });
+        }
+
+        // 앱 켜지자마자 전세계 친척들이 쓴 데이터 동기화
+        window.onload = () => {
+            loadLiveContent();
+            setInterval(loadLiveContent, 4000); // 4초마다 갱신
+        };
+
+        // 메시지 등록 서버 전송
+        document.getElementById('submitBtn').onclick = () => {
+            const name = document.getElementById('nameInput').value.trim();
+            const text = document.getElementById('messageInput').value.trim();
             if (!name || !text) { alert("이름과 메시지를 모두 입력해주세요!"); return; }
-            displayComment(name, text);
-            savedComments.push({ name: name, text: text });
-            localStorage.setItem('grandmaComments', JSON.stringify(savedComments));
-            nameInput.value = ''; messageInput.value = '';
-            burstConfetti();
+
+            fetch(`${DB_URL}/messages.json`, {
+                method: "POST",
+                body: JSON.stringify({ name, text })
+            }).then(() => {
+                document.getElementById('nameInput').value = '';
+                document.getElementById('messageInput').value = '';
+                loadLiveContent(); burstConfetti();
+            });
         };
 
         function displayComment(name, text) {
-            const div = document.createElement('div');
-            div.className = 'postit-item';
+            const div = document.createElement('div'); div.className = 'postit-item';
             div.innerHTML = `<strong>📌 From. ${name}</strong>${text}`;
-            commentList.appendChild(div);
+            document.getElementById('commentList').appendChild(div);
         }
 
+        // 사진 파일 등록 서버 전송 (실시간 공유용 외부 URL 전용 정비)
+        document.getElementById('uploadBtn').onclick = () => {
+            const url = document.getElementById('externalUrlInput').value.trim();
+            if (!url) { alert("인터넷 이미지 주소(링크)를 넣어주세요!"); return; }
+
+            const today = new Date();
+            const dateStr = `${today.getFullYear()}.${today.getMonth()+1}.${today.getDate()}`;
+
+            fetch(`${DB_URL}/gallery.json`, {
+                method: "POST",
+                body: JSON.stringify({ url: url, date: dateStr })
+            }).then(() => {
+                document.getElementById('externalUrlInput').value = '';
+                loadLiveContent(); burstConfetti();
+            });
+        };
+
+        function displayImageInGallery(url, dateStr) {
+            const item = document.createElement('div'); item.className = 'postit-item';
+            item.innerHTML = `<strong>📸 추억 한 장 (${dateStr})</strong>`;
+            const img = document.createElement('img'); img.src = url;
+            img.onerror = function() { item.remove(); };
+            item.appendChild(img);
+            document.getElementById('galleryContainer').appendChild(item);
+        }
+
+        // --- 룰렛 물리 제어 엔진 ---
         const wheel = document.getElementById('wheel');
         const spinBtn = document.getElementById('spinBtn');
         const couponResult = document.getElementById('couponResult');
-
         const coupons = [
-            "💆 손주의 든든한 어깨 안마 30분 이용권!",
-            "🎤 할머니가 부르면 언제든 달려가는 대기조 이용권!",
-            "🍲 아인이가 차려드리는 맛있는 저녁 밥상권!",
-            "😘 온 가족의 뽀뽀와 포옹 10회 이용권!"
+            "💆 손주의 든든한 어깨 안마 30분 이용권!", "🎤 할머니가 부르면 언제든 달려가는 대기조 이용권!",
+            "🍲 아인이가 차려드리는 맛있는 저녁 밥상권!", "😘 온 가족의 뽀뽀와 포옹 10회 이용권!"
         ];
-
-        let currentRotation = 0;
-        let isSpinning = false;
-
+        let currentRotation = 0; let isSpinning = false;
         spinBtn.onclick = () => {
-            if (isSpinning) return;
-            isSpinning = true;
+            if (isSpinning) return; isSpinning = true;
             couponResult.innerText = "빙글빙글 도는 중... 🎲";
             const randomDegree = Math.floor(Math.random() * 360) + 1800;
-            currentRotation += randomDegree;
-            wheel.style.transform = `rotate(${currentRotation}deg)`;
-
+            currentRotation += randomDegree; wheel.style.transform = `rotate(${currentRotation}deg)`;
             setTimeout(() => {
-                const finalAngle = (currentRotation % 360);
-                const normalizedAngle = (360 - finalAngle) % 360;
+                const finalAngle = (currentRotation % 360); const normalizedAngle = (360 - finalAngle) % 360;
                 let targetIndex = 0;
                 if (normalizedAngle >= 0 && normalizedAngle < 90) targetIndex = 0;
                 else if (normalizedAngle >= 90 && normalizedAngle < 180) targetIndex = 3;
                 else if (normalizedAngle >= 180 && normalizedAngle < 270) targetIndex = 2;
                 else targetIndex = 1;
-
-                couponResult.innerText = "🎉 당첨: " + coupons[targetIndex];
-                burstConfetti();
-                isSpinning = false;
+                couponResult.innerText = "🎉 당첨: " + coupons[targetIndex]; burstConfetti(); isSpinning = false;
             }, 3500);
         };
-
-        const imageInput = document.getElementById('imageInput');
-        const externalUrlInput = document.getElementById('externalUrlInput');
-        const uploadBtn = document.getElementById('uploadBtn');
-        const galleryContainer = document.getElementById('galleryContainer');
-
-        uploadBtn.onclick = () => {
-            let finalImageUrl = "";
-            if (externalUrlInput.value.trim() !== "") {
-                finalImageUrl = externalUrlInput.value.trim();
-            } else if (imageInput.files.length > 0) {
-                finalImageUrl = URL.createObjectURL(imageInput.files[0]);
-            } else {
-                alert("사진을 등록해주세요!");
-                return;
-            }
-            addImageToGallery(finalImageUrl);
-            imageInput.value = ''; externalUrlInput.value = '';
-            burstConfetti();
-        };
-
-        function addImageToGallery(url) {
-            const item = document.createElement('div');
-            item.className = 'postit-item';
-            const today = new Date();
-            const dateStr = `${today.getFullYear()}.${today.getMonth()+1}.${today.getDate()}`;
-            item.innerHTML = `<strong>📸 추억 한 장 (${dateStr})</strong>`;
-            const img = document.createElement('img');
-            img.src = url;
-            img.onerror = function() { alert("이미지 주소가 올바르지 않습니다."); item.remove(); };
-            item.appendChild(img);
-            galleryContainer.appendChild(item);
-        }
     </script>
 </body>
 </html>
