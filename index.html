@@ -28,6 +28,7 @@
             box-shadow: 0 5px 0px #d95373, 0 8px 15px rgba(255, 116, 148, 0.3); transition: all 0.1s ease; margin: 15px 0; box-sizing: border-box;
         }
         button:active, .btn-link:active { transform: translateY(4px); box-shadow: 0 1px 0px #d95373, 0 4px 6px rgba(255, 116, 148, 0.3); }
+        button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
         .btn-link { background-color: #ffb3c6; box-shadow: 0 5px 0px #d48c9e, 0 8px 15px rgba(255, 179, 198, 0.4); }
         
         .btn-floating-confetti {
@@ -67,6 +68,7 @@
         .postit-item::before { content: ""; position: absolute; top: -9px; left: 50%; transform: translateX(-50%); width: 50px; height: 18px; background-color: rgba(255, 255, 255, 0.5); }
         .postit-item strong { display: block; font-size: 13px; color: #736500; border-bottom: 1px dashed rgba(0, 0, 0, 0.15); padding-bottom: 5px; margin-bottom: 8px; }
         .postit-item img { width: 100%; height: auto; border-radius: 4px; margin-top: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .loading-msg { grid-column: 1 / -1; text-align: center; color: #ff8fa9; font-size: 15px; padding: 10px 0; }
         
         hr { border: 0; height: 2px; background: #ffe5ec; margin: 30px 0; }
         .confetti-piece { position: fixed; width: 10px; height: 10px; border-radius: 50%; z-index: 999; pointer-events: none; animation: fall linear forwards; }
@@ -85,9 +87,10 @@
         <a href="https://youtu.be" class="btn-link">🎵 노래 재생 </a>
     </div>
 
-    <!-- 2 구역: [완전 독립] 글씨 포스트잇 전용 방명록 -->
+    <!-- 2 구역: [완전 독립] 글씨 포스트잇 전용 방명록 (모두에게 공유) -->
     <div class="container">
         <h3>💌 할머니께 보내는 축하 포스트잇 편지</h3>
+        <p style="font-size:13px; color:#ff7494;">💡 여기 남긴 편지는 이 링크를 받은 모든 가족에게 함께 보여요!</p>
         <div>
             <input type="text" id="nameInput" placeholder="이름 (예: 큰아들, 손주 아인이)">
             <input type="text" id="messageInput" placeholder="축하 메시지를 입력하세요">
@@ -115,10 +118,10 @@
         <p id="couponResult">결과 대기 중...</p>
     </div>
 
-    <!-- 4 구역: [요청 완벽 반영] 스마트폰 갤러리에서 사진을 가져와 등록하는 단독 사진첩 구역 -->
+    <!-- 4 구역: [요청 완벽 반영] 스마트폰 갤러리에서 사진을 가져와 등록하는 단독 사진첩 구역 (모두에게 공유) -->
     <div class="container">
         <h3>📸 우리 가족 추억 사진첩</h3>
-        <p style="font-size:13px; color:#ff7494; text-align:center; margin-bottom:10px;">💡 스마트폰 갤러리에서 사진을 선택해서 등록 버튼을 눌러보세요!</p>
+        <p style="font-size:13px; color:#ff7494; text-align:center; margin-bottom:10px;">💡 스마트폰 갤러리에서 사진을 선택해서 등록 버튼을 눌러보세요! 올린 사진은 모든 가족에게 함께 보여요.</p>
         <div>
             <!-- 스마트폰 갤러리 및 PC 파일 탐색기 연동 -->
             <input type="file" id="imageInput" accept="image/*">
@@ -144,70 +147,123 @@
                 setTimeout(() => { piece.remove(); }, (duration + 0.3) * 1000);
             }
         }
-        window.addEventListener('DOMContentLoaded', () => { burstConfetti(); });
 
-        // --- 💌 2구역: 편지 포스트잇 로직 (새로고침 삭제 버그 완벽 제어) ---
+        // --- 💌 2구역: 편지 포스트잇 로직 (모든 사람에게 공유되는 저장소 사용) ---
         const nameInput = document.getElementById('nameInput');
         const messageInput = document.getElementById('messageInput');
         const submitBtn = document.getElementById('submitBtn');
         const commentList = document.getElementById('commentList');
 
-        const savedComments = JSON.parse(localStorage.getItem('grandmaComments')) || [];
-        savedComments.forEach(comment => displayComment(comment.name, comment.text));
-
-        submitBtn.onclick = () => {
-            const name = nameInput.value.trim(); const text = messageInput.value.trim();
-            if (!name || !text) { alert("이름과 메시지를 모두 입력해주세요!"); return; }
-            displayComment(name, text);
-            savedComments.push({ name: name, text: text });
-            localStorage.setItem('grandmaComments', JSON.stringify(savedComments));
-            nameInput.value = ''; messageInput.value = ''; burstConfetti();
-        };
-
         function displayComment(name, text) {
             const div = document.createElement('div'); div.className = 'postit-item';
-            div.innerHTML = `<strong>📌 From. ${name}</strong>${text}`; commentList.appendChild(div);
+            div.innerHTML = `<strong>📌 From. ${escapeHtml(name)}</strong>${escapeHtml(text)}`;
+            commentList.appendChild(div);
         }
 
-        // --- 📸 4구역: 스마트폰 갤러리 이미지 영구 압축 저장 엔진 ---
+        function escapeHtml(str) {
+            const d = document.createElement('div'); d.innerText = str; return d.innerHTML;
+        }
+
+        async function loadComments() {
+            commentList.innerHTML = '<p class="loading-msg">편지를 불러오는 중...</p>';
+            try {
+                const res = await window.storage.get('comments', true);
+                const arr = res ? JSON.parse(res.value) : [];
+                commentList.innerHTML = '';
+                arr.forEach(c => displayComment(c.name, c.text));
+            } catch (e) {
+                // 아직 저장된 편지가 없는 경우
+                commentList.innerHTML = '';
+            }
+        }
+
+        submitBtn.onclick = async () => {
+            const name = nameInput.value.trim();
+            const text = messageInput.value.trim();
+            if (!name || !text) { alert("이름과 메시지를 모두 입력해주세요!"); return; }
+
+            submitBtn.disabled = true; submitBtn.innerText = '저장 중...';
+            try {
+                let arr = [];
+                try {
+                    const res = await window.storage.get('comments', true);
+                    arr = res ? JSON.parse(res.value) : [];
+                } catch (e) { arr = []; }
+
+                arr.push({ name, text });
+                const saved = await window.storage.set('comments', JSON.stringify(arr), true);
+                if (!saved) throw new Error('save failed');
+
+                displayComment(name, text);
+                nameInput.value = ''; messageInput.value = ''; burstConfetti();
+            } catch (e) {
+                alert('편지를 저장하지 못했어요. 인터넷 연결을 확인하고 다시 시도해주세요.');
+            } finally {
+                submitBtn.disabled = false; submitBtn.innerText = '✏️ 축하 편지 붙이기';
+            }
+        };
+
+        // --- 📸 4구역: 스마트폰 갤러리 이미지를 모두에게 공유되는 저장소에 저장 ---
         const imageInput = document.getElementById('imageInput');
         const uploadBtn = document.getElementById('uploadBtn');
         const galleryContainer = document.getElementById('galleryContainer');
 
-        const savedImages = JSON.parse(localStorage.getItem('grandmaImages')) || [];
-        savedImages.forEach(imgData => displayImageInGallery(imgData));
+        function displayImageInGallery(base64Data, dateStr) {
+            const item = document.createElement('div'); item.className = 'postit-item';
+            item.innerHTML = `<strong>📸 추억 한 장 (${dateStr})</strong>`;
+            const img = document.createElement('img'); img.src = base64Data;
+            item.appendChild(img); galleryContainer.appendChild(item);
+        }
+
+        async function loadGallery() {
+            galleryContainer.innerHTML = '<p class="loading-msg">사진을 불러오는 중...</p>';
+            try {
+                const listRes = await window.storage.list('image:', true);
+                const keys = (listRes && listRes.keys) ? listRes.keys.slice().sort() : [];
+                galleryContainer.innerHTML = '';
+                for (const key of keys) {
+                    try {
+                        const res = await window.storage.get(key, true);
+                        if (res) {
+                            const obj = JSON.parse(res.value);
+                            displayImageInGallery(obj.data, obj.date);
+                        }
+                    } catch (e) { /* 개별 사진 로드 실패는 건너뜀 */ }
+                }
+            } catch (e) {
+                galleryContainer.innerHTML = '';
+            }
+        }
 
         uploadBtn.onclick = () => {
             const file = imageInput.files[0];
             if (!file) { alert("갤러리에서 등록할 사진 파일을 먼저 골라주세요!"); return; }
 
-            // [핵심 최적화] 모바일 갤러리 사진 파일을 새로고침해도 안 깨지게 Base64 초고속 문자열 압축 변환 인코딩
+            uploadBtn.disabled = true; uploadBtn.innerText = '업로드 중...';
+
             const reader = new FileReader();
-            reader.onloadend = function () {
+            reader.onloadend = async function () {
                 const base64String = reader.result;
-                displayImageInGallery(base64String);
-                savedImages.push(base64String);
-                // 브라우저 폰 저장소에 사진 정보 안전 영구 매립
+                const today = new Date();
+                const dateStr = `${today.getFullYear()}.${today.getMonth() + 1}.${today.getDate()}`;
+                const key = 'image:' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
+
                 try {
-                    localStorage.setItem('grandmaImages', JSON.stringify(savedImages));
-                } catch(e) {
-                    console.log("저장 용량 초과 예외 우회 처리");
+                    const saved = await window.storage.set(key, JSON.stringify({ date: dateStr, data: base64String }), true);
+                    if (!saved) throw new Error('save failed');
+                    displayImageInGallery(base64String, dateStr);
+                    imageInput.value = '';
+                    burstConfetti();
+                } catch (e) {
+                    alert('사진 저장에 실패했어요. 사진 용량이 너무 크거나 네트워크 문제일 수 있어요. 조금 더 작은 사진으로 다시 시도해주세요.');
+                } finally {
+                    uploadBtn.disabled = false; uploadBtn.innerText = '🖼️ 사진 포스트잇 등록하기';
                 }
-                imageInput.value = ''; burstConfetti();
-            }
+            };
             reader.readAsDataURL(file);
         };
 
-        function displayImageInGallery(base64Data) {
-            const item = document.createElement('div'); item.className = 'postit-item';
-            const today = new Date(); const dateStr = `${today.getFullYear()}.${today.getMonth()+1}.${today.getDate()}`;
-            item.innerHTML = `<strong>📸 추억 한 장 (${dateStr})</strong>`;
-            
-            const img = document.createElement('img'); img.src = base64Data;
-            item.appendChild(img); galleryContainer.appendChild(item);
-        }
-
-        // --- 🎪 3구역: 룰렛 연산 제어부 ---
+        // --- 🎪 3구역: 룰렛 연산 제어부 (개인 화면 효과이므로 공유 저장 불필요) ---
         const wheel = document.getElementById('wheel'); const spinBtn = document.getElementById('spinBtn'); const couponResult = document.getElementById('couponResult');
         const coupons = ["💆 손주의 든든한 어깨 안마 30분 이용권!", "🎤 할머니가 부르면 언제든 달려가는 대기조 이용권!", "🍲 아인이가 차려드리는 맛있는 저녁 밥상권!", "😘 온 가족의 뽀뽀와 포옹 10회 이용권!"];
         let currentRotation = 0; let isSpinning = false;
@@ -221,6 +277,13 @@
                 couponResult.innerText = "🎉 당첨: " + coupons[targetIndex]; burstConfetti(); isSpinning = false;
             }, 3500);
         };
+
+        // --- 초기 로딩 ---
+        window.addEventListener('DOMContentLoaded', () => {
+            burstConfetti();
+            loadComments();
+            loadGallery();
+        });
     </script>
 </body>
 </html>
